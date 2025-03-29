@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Editor from "@monaco-editor/react";
 import { submitCode } from "@/app/utils/judge0";
@@ -9,7 +9,7 @@ import { decodeToken } from "@/app/utils/token";
 import { decryptData } from "@/app/utils/cipher";
 import { generateInterviewQuestion } from "@/app/config/ai-config";
 
-export default function MockInterview() {
+function MockInterviewContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -27,7 +27,7 @@ export default function MockInterview() {
   const [score, setScore] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!user || !mock ) {
+    if (!user || !mock) {
       setIsValid(false);
       return;
     }
@@ -61,27 +61,27 @@ export default function MockInterview() {
       alert("Please enter some code before running.");
       return;
     }
-  
+
     setOutput("Executing...");
     const result = await submitCode(code, language.id);
     setOutput(result?.stdout || result?.stderr || "Execution error.");
   };
-  
+
   const handleSubmitCode = async () => {
     if (!code.trim()) {
       alert("Please enter some code before submitting.");
       return;
     }
-  
+
     if (!question) {
       setFeedback("Question not loaded. Please wait.");
       return;
     }
-  
+
     setLoadingSubmit(true);
     setFeedback(null);
     setScore(null);
-  
+
     try {
       const token = sessionStorage.getItem("token");
       const decodedUser = token ? decodeToken(token) : null;
@@ -89,7 +89,7 @@ export default function MockInterview() {
         router.push("/");
         return;
       }
-  
+
       const response = await fetch("/api/auth/v.0.0/mocktest", {
         method: "POST",
         headers: {
@@ -103,7 +103,7 @@ export default function MockInterview() {
           language: language.name,
         }),
       });
-  
+
       const data = await response.json();
       if (response.ok) {
         setFeedback(data?.interview?.feedback || "No feedback available.");
@@ -117,8 +117,6 @@ export default function MockInterview() {
       setLoadingSubmit(false);
     }
   };
-  
-  
 
   if (!isValid) {
     return (
@@ -201,18 +199,24 @@ export default function MockInterview() {
           <pre className="mt-4 p-3 border bg-gray-800 text-white text-sm overflow-auto rounded-sm h-24">
             {output || "Output will appear here..."}
           </pre>
-
-          
         </div>
       </div>
 
       {feedback && (
-            <div className="mt-4 p-3 border border-yellow-600 rounded-md bg-gray-50">
-              <h3 className="font-semibold text-yellow-600">AI Feedback:</h3>
-              <p className="text-gray-700">{feedback}</p>
-              <p className="text-gray-800 font-semibold">Score: {score}/100</p>
-            </div>
-          )}
+        <div className="mt-4 p-3 border border-yellow-600 rounded-md bg-gray-50">
+          <h3 className="font-semibold text-yellow-600">AI Feedback:</h3>
+          <p className="text-gray-700">{feedback}</p>
+          <p className="text-gray-800 font-semibold">Score: {score}/100</p>
+        </div>
+      )}
     </div>
+  );
+}
+
+export default function MockInterview() {
+  return (
+    <Suspense fallback={<div>Loading interview...</div>}>
+      <MockInterviewContent />
+    </Suspense>
   );
 }
