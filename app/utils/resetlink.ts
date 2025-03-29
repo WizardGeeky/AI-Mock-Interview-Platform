@@ -7,7 +7,7 @@ export async function generateResetLink(email: string): Promise<string> {
     await databaseConnection();
     const resetToken = crypto.randomBytes(32).toString("hex");
     const expiry = new Date(Date.now() + 3 * 60 * 1000);
-    const resetLink = `https://ai-mock-interview-platform-self.vercel.app/components/reset/password?resetLink=${resetToken}`;
+    const resetLink = `https://ai-mock-interview-platform-rose.vercel.app/components/reset/password?resetLink=${resetToken}`;
     await ResetLink.findOneAndDelete({ email });
     await ResetLink.create({ email, link: resetToken, expiry });
     return resetLink;
