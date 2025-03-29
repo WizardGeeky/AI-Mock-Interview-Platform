@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function PasswordResetLink() {
+function PasswordResetForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const resetToken = searchParams.get("resetLink");
@@ -115,5 +115,13 @@ export default function PasswordResetLink() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function PasswordResetLink() {
+  return (
+    <Suspense fallback={<p className="text-gray-500">Loading...</p>}>
+      <PasswordResetForm />
+    </Suspense>
   );
 }
