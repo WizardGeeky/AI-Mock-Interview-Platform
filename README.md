@@ -5,7 +5,11 @@
 ## 🌍 Live Demo
 🔗 **[Try It Now](https://ai-mock-interview-platform-rose.vercel.app/)**  
 
----
+### Flow Chat
+
+![image](https://github.com/user-attachments/assets/976b5cd9-657b-4d45-9fba-c7d6dbad42a0)
+
+
 
 ## 🔥 Key Features
 
